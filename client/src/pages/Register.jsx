@@ -1,12 +1,15 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import OAuth from '../components/OAuth';
+import { logoutUserStart, logoutUserSuccess } from '../redux/user/userSlice';
+import { useDispatch } from 'react-redux';
 
 export default function Register() {
 
   const [ formData, setFormData ] = useState({});
   const [ error, setError ] = useState(null);
   const [ loading, setLoading ] = useState(false);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -19,6 +22,7 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      dispatch(logoutUserStart());
       setLoading(true);
       const res = await fetch('/api/auth/register', {
         method: 'POST',
@@ -36,6 +40,7 @@ export default function Register() {
       }
       setLoading(false);
       setError(null);
+      dispatch(logoutUserSuccess());
       navigate('/login');
     } catch(error) {
       setLoading(false);
